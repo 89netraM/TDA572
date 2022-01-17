@@ -1,11 +1,12 @@
-namespace Tapper.Model;
-
-public enum PlayerAction
+namespace Tapper.Model
 {
-	None,
-	Up,
-	Left,
-	Right,
-	Down,
-	Tap,
+	public enum PlayerAction
+	{
+		None,
+		Up,
+		Left,
+		Right,
+		Down,
+		Tap,
+	}
 }

@@ -1,15 +1,28 @@
 using System;
 
-namespace Tapper.Model;
-
-public readonly struct Progression
+namespace Tapper.Model
 {
-	public Func<int, int> BarCount { get; init; } = static bc => bc;
-	public Func<double, double> PlayerSpeed { get; init; } = static ps => ps;
-	public Func<double, double> GlassSpeed { get; init; } = static gs => gs;
-	public Func<int, int> PatronMaxCount { get; init; } = static pmc => Math.Min(pmc + 1, 4);
-	public Func<double, double> PatronSpeed { get; init; } = static ps => ps * 1.2d;
-	public Func<double, double> PatronBackSpeed { get; init; } = static pbs => pbs;
-	public Func<double, double> PatronBackSlide { get; init; } = static pbs => pbs * 0.9d;
-	public Func<double, double> PatronTipChance { get; init; } = static ptc => ptc;
+	public readonly struct Progression
+	{
+		public static Progression Default { get; } = new Progression
+		{
+			BarCount = static bc => bc,
+			PlayerSpeed = static ps => ps,
+			GlassSpeed = static gs => gs,
+			PatronMaxCount = static pmc => Math.Min(pmc + 1, 4),
+			PatronSpeed = static ps => ps * 1.2d,
+			PatronBackSpeed = static pbs => pbs,
+			PatronBackSlide = static pbs => pbs * 0.9d,
+			PatronTipChance = static ptc => ptc,
+		};
+
+		public Func<int, int> BarCount { get; init; }
+		public Func<double, double> PlayerSpeed { get; init; }
+		public Func<double, double> GlassSpeed { get; init; }
+		public Func<int, int> PatronMaxCount { get; init; }
+		public Func<double, double> PatronSpeed { get; init; }
+		public Func<double, double> PatronBackSpeed { get; init; }
+		public Func<double, double> PatronBackSlide { get; init; }
+		public Func<double, double> PatronTipChance { get; init; }
+	}
 }
