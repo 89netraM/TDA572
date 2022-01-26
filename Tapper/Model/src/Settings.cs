@@ -13,6 +13,7 @@ namespace Tapper.Model
 			PatronBackSpeed = 0.25d,
 			PatronBackSlide = 0.5d,
 			PatronTipChance = 0.25d,
+			PatronSpawnChance = 0.1d,
 		};
 
 		public int? Seed { get; init; }
@@ -24,6 +25,7 @@ namespace Tapper.Model
 		public double PatronBackSpeed { get; init; }
 		public double PatronBackSlide { get; init; }
 		public double PatronTipChance { get; init; }
+		public double PatronSpawnChance { get; init; }
 
 		public Settings NextLevel(Progression p) =>
 			new Settings
@@ -37,6 +39,7 @@ namespace Tapper.Model
 				PatronBackSpeed = p.PatronBackSpeed(PatronBackSpeed),
 				PatronBackSlide = p.PatronBackSlide(PatronBackSlide),
 				PatronTipChance = p.PatronTipChance(PatronTipChance),
+				PatronSpawnChance = p.PatronSpawnChance(PatronSpawnChance),
 			};
 	}
 }

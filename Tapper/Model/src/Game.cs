@@ -14,7 +14,7 @@ namespace Tapper.Model
 		private readonly Random random;
 
 		private readonly IReadOnlyList<List<Patron>> barPatronPositions;
-		public IReadOnlyList<IReadOnlyList<Patron>> BarPateronPositions => barPatronPositions;
+		public IReadOnlyList<IReadOnlyList<Patron>> BarPatronPositions => barPatronPositions;
 
 		private readonly IReadOnlyList<List<Glass>> barGlassPositions;
 		public IReadOnlyList<IReadOnlyList<Glass>> BarGlassesPositions => barGlassPositions;
@@ -95,6 +95,15 @@ namespace Tapper.Model
 							break;
 						}
 					}
+				}
+			}
+
+			// Spawn patrons
+			for (int b = 0; b < Settings.BarCount; b++)
+			{
+				if (barPatronPositions[b].Count < Settings.PatronMaxCount && random.NextDouble() < Settings.PatronSpawnChance)
+				{
+					barPatronPositions[b].Add(new ThirstyPatron(NextId(), BarStart));
 				}
 			}
 

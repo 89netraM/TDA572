@@ -14,6 +14,7 @@ namespace Tapper.Model
 			PatronBackSpeed = static pbs => pbs,
 			PatronBackSlide = static pbs => pbs * 0.9d,
 			PatronTipChance = static ptc => ptc,
+			PatronSpawnChance = static psc => psc,
 		};
 
 		public Func<int, int> BarCount { get; init; }
@@ -24,5 +25,6 @@ namespace Tapper.Model
 		public Func<double, double> PatronBackSpeed { get; init; }
 		public Func<double, double> PatronBackSlide { get; init; }
 		public Func<double, double> PatronTipChance { get; init; }
+		public Func<double, double> PatronSpawnChance { get; init; }
 	}
 }

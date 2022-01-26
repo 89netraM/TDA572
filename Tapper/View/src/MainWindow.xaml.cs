@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Tapper.View.ViewModel;
+using GameModel = Tapper.Model.Game;
 
 namespace Tapper.View
 {
@@ -20,9 +10,17 @@ namespace Tapper.View
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private GameModel game;
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			game = new GameModel();
+			while (game.BarPatronPositions.Sum(static b => b.Count) < 5)
+			{
+				game.Tick(Model.PlayerAction.None);
+			}
+			DataContext = Game.FromModel(game);
 		}
 	}
 }
