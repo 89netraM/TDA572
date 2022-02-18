@@ -119,6 +119,7 @@ public partial class SilkWindow : IInputManager
 	{
 		gamepad.ButtonDown += OnGamepadButtonDown;
 		gamepad.ButtonUp += OnGamepadButtonUp;
+		gamepad.Deadzone = new Deadzone(0.2f, DeadzoneMethod.Traditional);
 		gamepads.Add(gamepad.Index, gamepad);
 	}
 
@@ -256,6 +257,23 @@ public partial class SilkWindow : IInputManager
 	/// <inheritdoc/>
 	public bool IsButtonUp(Button button, int player) =>
 		buttonStates.TryGetValue((button, player), out var state) && state == InputState.Up;
+
+
+	/// <inheritdoc/>
+	public float GetGamepadAxis(GamepadAxis axis) =>
+		gamepads.Keys.Select(index => GetGamepadAxis(axis, index))
+			.FirstOrDefault(value => value != 0.0f);
+
+	/// <inheritdoc/>
+	public float GetGamepadAxis(GamepadAxis axis, int player) => axis switch
+	{
+		GamepadAxis.LeftStickX => gamepads.TryGetValue(player, out var gamepad) ? gamepad.Thumbsticks[0].X : 0.0f,
+		GamepadAxis.LeftStickY => gamepads.TryGetValue(player, out var gamepad) ? -gamepad.Thumbsticks[0].Y : 0.0f,
+		GamepadAxis.RightStickX => gamepads.TryGetValue(player, out var gamepad) ? gamepad.Thumbsticks[1].X : 0.0f,
+		GamepadAxis.RightStickY => gamepads.TryGetValue(player, out var gamepad) ? -gamepad.Thumbsticks[1].Y : 0.0f,
+		GamepadAxis.Trigger => gamepads.TryGetValue(player, out var gamepad) ? -(gamepad.Triggers[0].Position + 1.0f) / 2.0f + (gamepad.Triggers[1].Position + 1.0f) / 2.0f : 0.0f,
+		_ => 0.0f,
+	};
 
 	public void DisposeInput()
 	{

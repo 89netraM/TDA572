@@ -101,6 +101,15 @@ public interface IInputManager
 	/// Were <paramref name="button"/> released this frame by <paramref name="player"/>?
 	/// </summary>
 	bool IsButtonUp(Button button, int player);
+
+	/// <summary>
+	/// The current value of the given <paramref name="axis"/>.
+	/// </summary>
+	float GetGamepadAxis(GamepadAxis axis);
+	/// <summary>
+	/// The current value of the given <paramref name="axis"/> for the given <paramref name="player"/>.
+	/// </summary>
+	float GetGamepadAxis(GamepadAxis axis, int player);
 }
 
 public enum MouseButton
@@ -269,4 +278,13 @@ public enum InputState
 	Down,
 	Pressed,
 	Up,
+}
+
+public enum GamepadAxis
+{
+	LeftStickX,
+	LeftStickY,
+	RightStickX,
+	RightStickY,
+	Trigger,
 }

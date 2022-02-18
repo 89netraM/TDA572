@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using GameTest;
+using Microsoft.Extensions.DependencyInjection;
 using Zarya;
 using Zarya.Silk.NET;
 using Zarya.SkiaSharp;
@@ -10,6 +11,7 @@ builder.AddMessagePasser();
 builder.AddTagManager();
 builder.AddSilkWindow();
 builder.AddSkiaSharpRenderer();
+builder.Services.AddSingleton<Input>();
 
 var game = builder.Build<SilkWindow>();
 var spaceship = game.GameManager.Create<Spaceship>()!;

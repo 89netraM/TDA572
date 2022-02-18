@@ -15,7 +15,7 @@ class Spaceship : IDisposable
 
 	private readonly SkiaSharpSprite sprite;
 	private readonly SilkWindow silkWindow;
-	private readonly IInputManager inputManager;
+	private readonly Input input;
 	private readonly PhysicsManager2D physicsManager;
 	private readonly IGameManager gameManager;
 
@@ -24,7 +24,7 @@ class Spaceship : IDisposable
 		PhysicsBody2D physicsBody,
 		SkiaSharpSprite sprite,
 		SilkWindow silkWindow,
-		IInputManager inputManager,
+		Input input,
 		PhysicsManager2D physicsManager,
 		IGameManager gameManager)
 	{
@@ -40,7 +40,7 @@ class Spaceship : IDisposable
 
 		this.silkWindow = silkWindow;
 
-		this.inputManager = inputManager;
+		this.input = input;
 
 		this.physicsManager = physicsManager;
 		this.physicsManager.BeforeUpdate += OnBeforePhysicsUpdate;
@@ -55,30 +55,21 @@ class Spaceship : IDisposable
 
 	private void OnBeforePhysicsUpdate()
 	{
-		if (inputManager.IsKeyPressed(Key.W))
-		{
-			physicsBody.Velocity += Transform.Forward * 30.0f;
-		}
-
-		if (inputManager.IsKeyPressed(Key.S))
-		{
-			physicsBody.Velocity -= Transform.Forward * 12.0f;
-		}
-
-		if (inputManager.IsKeyPressed(Key.A))
-		{
-			physicsBody.AngularVelocity -= MathF.PI / 10.0f;
-		}
-
-		if (inputManager.IsKeyPressed(Key.D))
-		{
-			physicsBody.AngularVelocity += MathF.PI / 10.0f;
-		}
+		physicsBody.Velocity += input.Vertical() * Transform.Forward * 30.0f;
+		physicsBody.AngularVelocity += input.Horizontal() * MathF.PI / 10.0f;
 	}
 
 	private void OnUpdate(float deltaTime)
 	{
-		if (inputManager.IsKeyUp(Key.Space))
+		if (input.Reset())
+		{
+			Transform.Position = new Vector2(500.0f, 500.0f);
+			Transform.Rotation = 0.0f;
+			physicsBody.Velocity = Vector2.Zero;
+			physicsBody.AngularVelocity = 0.0f;
+		}
+
+		if (input.Fire())
 		{
 			FireBullet();
 		}
