@@ -5,10 +5,8 @@ using Zarya.Input;
 
 namespace GameTest;
 
-class Input : InputBase
+record Input(IInputManager inputManager) : InputBase(inputManager)
 {
-	public Input(IInputManager inputManager) : base(inputManager) { }
-
 	[KeyboardAxisInput(Key.Down, Key.Up)]
 	[KeyboardAxisInput(Key.S, Key.W)]
 	[GamepadAxisInput(GamepadAxis.LeftStickY)]

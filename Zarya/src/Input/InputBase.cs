@@ -9,10 +9,8 @@ namespace Zarya.Input;
 /// </summary>
 /// <example>
 /// <code>
-/// class MyInput : InputBase
+/// record MyInput(IInputManager inputManager) : InputBase(inputManager)
 /// {
-/// 	public MyInput(IInputManager inputManager) : base(inputManager) { }
-///
 /// 	[KeyboardInput(Key.Space, InputState.Down)]
 /// 	[GamepadButtonInput(Button.South, InputState.Down)]
 /// 	public InputButton MyButton { get; }
@@ -23,7 +21,7 @@ namespace Zarya.Input;
 /// }
 /// </code>
 /// </example>
-public abstract class InputBase
+public record InputBase
 {
 	protected IInputManager InputManager { get; }
 
