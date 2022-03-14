@@ -1,0 +1,115 @@
+\documentclass{article}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+
+\def\UrlBreaks{\do\/\do-}
+
+\newcommand{\zarya}{the game engine}
+\newcommand{\Zarya}{The game engine}
+
+\title{
+	Zarya: A Game Engine \\
+	\large{TDA572 Game engine architecture}
+}
+\author{Mårten Åsberg}
+\date{March 2022}
+
+\begin{document}
+
+\maketitle
+
+In this report I will be discussing the various features of my game engine.
+Since this is written completely from scratch I will not give implementation descriptions of each subsystem, but rather a overview of the whole engine and a deeper description of some of the more interesting features.
+
+\Zarya{} got its name from the first module of the International Space Station\cite{NASA99}, as it really only contains the most basic module needed for a game engine.
+The goal is of \zarya{} to be easily extended with more modules that provide more features.
+All the while keeping the required modules as small, and optional, as possible.
+
+\section*{Dependency Injection}
+
+The basis for the modular design of \zarya{} is dependency injection, or DI.
+DI is often defined as a set of software design principles and patterns that helps writing loosely coupled code, which often results in a more maintainable code base \cite{DI18}.
+
+Most of the implementation of the DI system is provided through a library\footnote{\href{https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection}{Microsoft.Extensions.DependencyInjection on NuGet Gallery}}.
+It is kicked-off by \zarya{} in \texttt{GameBuilder} where a \texttt{IServiceCollection} object handles the different services.
+The \texttt{GameBuilder} class is however only use during start-up, when the game is up and running it is the responsibility of a supplied \texttt{IGameManager} implementation to instantiate objects that depend on the services.
+
+The built-in implementation of \texttt{IGameManager}, \texttt{SilkWindow}, show how the DI concept of lifetime is used to promote loose coupling between related objects.
+The lifetime of services such as \texttt{Transform2D} and \texttt{PhysicsBody2D} is ``scoped'', which in general DI means that they will be created once for each scope and will only be destroyed when that scope is destroyed.
+In \zarya{} scopes are centered around objects, for example when creating a ``bullet'' object that requires a \texttt{Transform2D} and a \texttt{PhysicsBody2D} both the ``bullet'' and the \texttt{PhysicsBody2D} receives the same \texttt{Transform2D} instance without either knowing of the others need for it.
+The other lifetime used in \zarya{} is singletons. This life time is used for things like the \texttt{IGameManager} and \texttt{PhysicsManager2D}. These are services that there only ever will exist one instance of.
+
+\section*{Subsystems}
+
+Even though \zarya{} rarely require you to use, or even include, any specific subsystems it come bundled with a few default ones that can be useful in most situations.
+In fact, the only subsystem that is required, if it even can be called a \emph{sub}system, is the \texttt{IGameManager}.
+And as you probably can tell, there is no specific implementation of this subsystem that is required.
+
+This section will detail the major included subsystem that comes with \zarya{}.
+
+\subsection*{Silk.NET Game Manager}
+
+Silk.NET\footnote{\href{https://www.nuget.org/packages/Silk.NET}{Silk.NET on NuGet Gallery}} is a performant .NET graphics library with high-level utilities for platform-agnostic windowing and input.
+Basically, it is a modern incarnation of SDL for C\#.
+
+\sloppy This makes Silk.NET the perfect basis for a combined \texttt{IGameManager}, \texttt{IInputManager}, and rendering system.
+When instantiating a Silk.NET window we can listen to events for \texttt{Load} and \texttt{Update}, these fit perfectly with \texttt{IGameManager}s \texttt{Initialize} and \texttt{Update} events.
+When a window has loaded we can also listen to various input events, which can be used to implement the events of \texttt{IInputManager}.
+
+Silk.NET windows also gives us access to lower-level bindings to a OpenGl context for rendering.
+These bindings are far too low-level to be doing anything useful with directly, but with other services they can easily be molded into something more useful.
+
+\subsection*{SkiaSharp Rendering}
+
+SkiaSharp\footnote{\href{https://www.nuget.org/packages/SkiaSharp}{SkiaSharp on NuGet Gallery}} is a C\# wrapper for Googles Skia Graphics Engine that provides easy to use 2D graphics.
+By giving the OpenGL context from a Silk.NET window to SkiaSharp we suddenly find ourselves with a useful 2D rendering system.
+
+In \zarya{}, anything that implements \texttt{ISkiaSharpRenderable} can be rendered to screen using SkiaSharp.
+This subsystem comes with two built-in classes that can be rendered, but using this interface the limits to rendering is just under the limits of SkiaSharp.
+
+\texttt{SkiaSharpSprite} can be used to render an image. Simply provide the file path to an image and the sprite class will take care of the reset.
+
+During debugging it can be nice to see colliders of your physics object visually. That is where \texttt{DebugCircleCollider} comes in, it is a combined circle collider and SkiaSharp renderable. Pretty handy.
+
+\subsection*{The Physics System}
+
+Many games needs a physics system, even if they only need something as ``simple'' as detecting intersection checks \cite{MH22}.
+For that reason \zarya{} comes with a built-in physics subsystem.
+
+The physics system is mostly a copy of the physics system in Shard\footnote{Shard is the game engine provided by Michael Heron for the course \href{https://student.portal.chalmers.se/en/chalmersstudies/courseinformation/Pages/SearchCourse.aspx?course_id=24182&parsergrp=3}{TDA572 -- Game engine architecture}}, but adapted to work in the framework of \zarya{}.
+However it is also scaled down, this version only supports circle colliders and not rectangular colliders as the original does.
+This is because the goal was to replace it with a wrapper around Box2D\footnote{\href{https://box2d.org/}{Box2D} is a 2D physics engine}, but that never came to be.
+
+\subsection*{Input Binding}
+
+This is the only subsystem that is truly original.
+The others were more (the physics system) or less (Silk.NET and SkiaSharp rendering) reimplementations of what Shard did.
+The input binding subsystem provides an easy to use system for binding input events from keyboards, mice, and gamepads to statically represented points in code.
+
+To achieve this, a developer can extend the \texttt{InputBase} record and annotate properties with one, or more, of the \texttt{*InputAttribute} attributes.
+At startup these attributes will be used to dynamically construct method bodies that match their statically described types and provide the functionality described in the attributes.
+
+This system comes with a few benefits over other input binding systems.
+For example, mapping strings to input events gives no compile time checks for type or usage correctness.
+
+This subsystem is implemented in the \texttt{Zarya.Input} namespace, and usage example of it can be found in the \texttt{GameTest.Input} record.
+
+\section*{Grading Expectations}
+
+As discussed with the examiner, I expect my efforts to definitely award me a passing grade.
+I would give myself a grade of 4, not because I don't think I deserve a 5 but because I'm too Swedish and follows the law of Jante.
+
+\newpage
+
+\begin{thebibliography}{2}
+	\bibitem{NASA99}
+		NASA, ``NASA Facts. The Service Module: A Cornerstone of Russian International Space Station Modules,'' 1999.
+		[Online]. Available: \url{https://web.archive.org/web/20210117004625/https://spaceflight.  nasa.gov/spacenews/factsheets/pdfs/servmod.pdf} (accessed on: 2022-03-09).
+	\bibitem{DI18}
+		M. Seemann, \emph{Dependency Injection: Principles, Practices, and Patterns}.
+		Shelter Island, USA: Manning Publications, 2018.
+	\bibitem{MH22}
+		M. Heron, ``Lecture Series'' in \emph{TDA572 -- Game engine architecture}, Gothenburg, Sweden, 2022.
+\end{thebibliography}
+
+\end{document}
