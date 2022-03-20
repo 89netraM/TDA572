@@ -8,5 +8,5 @@ namespace Zarya.Input;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
 public abstract class InputAttribute : Attribute
 {
-	public abstract bool GetValue(IInputManager inputManager);
+	public abstract bool GetValue(IInputManager inputManager, int player);
 }

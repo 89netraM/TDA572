@@ -19,6 +19,8 @@ public class GamepadButtonInputAttribute : InputAttribute
 	public GamepadButtonInputAttribute(Button button, InputState state = InputState.Pressed) =>
 		(Button, State) = (button, state);
 
-	public override bool GetValue(IInputManager inputManager) =>
-		inputManager.IsButton(Button, State);
+	public override bool GetValue(IInputManager inputManager, int player) =>
+		player == InputBase.AnyGamepad ?
+			inputManager.IsButton(Button, State) :
+			inputManager.IsButton(Button, State, player);
 }

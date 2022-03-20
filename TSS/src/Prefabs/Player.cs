@@ -23,7 +23,7 @@ class Player : ISkiaSharpRenderable, IDisposable
 	private readonly SilkWindow window;
 	private readonly IGameManager gameManager;
 	private readonly PhysicsManager2D physicsManager;
-	private readonly Input input;
+	private readonly IInput input;
 
 	public event Action<Player>? Died;
 
@@ -39,8 +39,9 @@ class Player : ISkiaSharpRenderable, IDisposable
 		SilkWindow window,
 		IGameManager gameManager,
 		PhysicsManager2D physicsManager,
-		Input input,
-		Vector2 startPosition
+		IInput input,
+		Vector2 startPosition,
+		PlayerHealthPosition healthPosition
 	)
 	{
 		Transform = transform;
@@ -67,6 +68,7 @@ class Player : ISkiaSharpRenderable, IDisposable
 
 		this.health = this.gameManager.Create<PlayerHealth>()!;
 		this.health.Color = color;
+		this.health.Position = healthPosition;
 
 		this.input = input;
 	}

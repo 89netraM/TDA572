@@ -58,6 +58,11 @@ public interface IInputManager
 	bool IsMouseButtonUp(MouseButton button);
 
 	/// <summary>
+	/// The number of gamepads currently connected.
+	/// </summary>
+	int GamepadCount { get; }
+
+	/// <summary>
 	/// Were <paramref name="button"/> <paramref name="state"/> this frame?
 	/// </summary>
 	bool IsButton(Button button, InputState state) => state switch

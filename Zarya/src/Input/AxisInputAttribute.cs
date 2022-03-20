@@ -11,5 +11,5 @@ public abstract class AxisInputAttribute : Attribute
 	/// <summary>
 	/// Gets the value of the axis. In the range of -1 to 1.
 	/// </summary>
-	public abstract float GetValue(IInputManager inputManager);
+	public abstract float GetValue(IInputManager inputManager, int player);
 }

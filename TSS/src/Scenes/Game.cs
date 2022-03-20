@@ -9,13 +9,14 @@ namespace TSS;
 
 class Game : IDisposable
 {
-	private const float OddsOfIncreasingEnemyCount = 0.05f;
-	private const float OddsOfDecreasingEnemySpawnInterval = 0.4f;
-	private const float EnemySpawnIntervalDecrease = 0.95f;
+	private const float OddsOfIncreasingEnemyCount = 0.075f;
+	private const float OddsOfDecreasingEnemySpawnInterval = 0.5f;
+	private const float EnemySpawnIntervalDecrease = 0.925f;
 
 	private readonly IGameManager gameManager;
 	private readonly PhysicsManager2D physicsManager;
 	private readonly SilkWindow window;
+	private readonly IInputManager inputManager;
 
 	private readonly IList<Player> players = new List<Player>();
 	private readonly IList<Enemy> enemies = new List<Enemy>();
@@ -31,11 +32,13 @@ class Game : IDisposable
 	public Game(
 		IGameManager gameManager,
 		SilkWindow window,
+		IInputManager inputManager,
 		PhysicsManager2D physicsManager
 	)
 	{
 		this.gameManager = gameManager;
 		this.window = window;
+		this.inputManager = inputManager;
 
 		this.scoreRender = this.gameManager.Create<ScoreRender>()!;
 
@@ -47,10 +50,30 @@ class Game : IDisposable
 
 	private void OnInitialize()
 	{
-		var player = gameManager.Create<Player>(new Vector2(200.0f, 200.0f))!;
-		player.Died += OnPlayerDied;
-		players.Add(player);
+		var keyboardPlayer = gameManager.Create<Player>(PlayerSpawnPosition(0), PlayerHealthPosition(0), gameManager.Create<KeyboardInput>()!)!;
+		keyboardPlayer.Died += OnPlayerDied;
+		players.Add(keyboardPlayer);
+
+		for (int i = 0; i < inputManager.GamepadCount; i++)
+		{
+			var player = gameManager.Create<Player>(PlayerSpawnPosition(1 + i), PlayerHealthPosition(1 + i), gameManager.Create<GamepadInput>(i)!)!;
+			player.Died += OnPlayerDied;
+			players.Add(player);
+		}
+
+		EnemyCount += inputManager.GamepadCount;
 	}
+
+	private Vector2 PlayerSpawnPosition(int player) => player switch
+	{
+		0 => new Vector2(200.0f, 200.0f),
+		1 => new Vector2((window.Width ?? 800.0f) - 200.0f, 200.0f),
+		2 => new Vector2(200.0f, (window.Height ?? 800.0f) - 200.0f),
+		3 => new Vector2((window.Width ?? 800.0f) - 200.0f, (window.Height ?? 800.0f) - 200.0f),
+		_ => throw new ArgumentOutOfRangeException(nameof(player)),
+	};
+
+	private PlayerHealthPosition PlayerHealthPosition(int player) => (PlayerHealthPosition)(player);
 
 	private void OnBeforeUpdate()
 	{

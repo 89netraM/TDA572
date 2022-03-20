@@ -235,6 +235,9 @@ public partial class SilkWindow : IInputManager
 		mouseButtonStates.TryGetValue(button, out var state) && state == InputState.Up;
 
 	/// <inheritdoc/>
+	public int GamepadCount => gamepads.Count;
+
+	/// <inheritdoc/>
 	public bool IsButtonDown(Button button) =>
 		gamepads.Keys.Any(index => IsButtonDown(button, index));
 

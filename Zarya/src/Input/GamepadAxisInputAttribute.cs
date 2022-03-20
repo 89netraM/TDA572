@@ -14,6 +14,8 @@ public class GamepadAxisInputAttribute : AxisInputAttribute
 	public GamepadAxisInputAttribute(GamepadAxis axis) =>
 		Axis = axis;
 
-	public override float GetValue(IInputManager inputManager) =>
-		inputManager.GetGamepadAxis(Axis);
+	public override float GetValue(IInputManager inputManager, int player) =>
+		player == InputBase.AnyGamepad ?
+			inputManager.GetGamepadAxis(Axis) :
+			inputManager.GetGamepadAxis(Axis, player);
 }

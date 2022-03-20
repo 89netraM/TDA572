@@ -43,7 +43,7 @@ class StartMenu : IDisposable
 			center = new Vector2(w / 2.0f, h / 2.0f);
 		}
 
-		player = gameManager.Create<Player>(center);
+		player = gameManager.Create<Player>(center, PlayerHealthPosition.TopLeft, gameManager.Create<AnyInput>()!);
 
 		var buttonOffset = new Vector2(200.0f, 100.0f);
 

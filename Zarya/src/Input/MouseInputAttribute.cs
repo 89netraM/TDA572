@@ -19,6 +19,6 @@ public class MouseInputAttribute : InputAttribute
 	public MouseInputAttribute(MouseButton button, InputState state = InputState.Pressed) =>
 		(Button, State) = (button, state);
 
-	public override bool GetValue(IInputManager inputManager) =>
+	public override bool GetValue(IInputManager inputManager, int _) =>
 		inputManager.IsMouseButton(Button, State);
 }

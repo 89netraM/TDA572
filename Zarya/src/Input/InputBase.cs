@@ -21,20 +21,28 @@ namespace Zarya.Input;
 /// }
 /// </code>
 /// </example>
-public record InputBase
+public abstract record InputBase
 {
+	/// <summary>
+	/// Indicates that input from any gamepad should be accepted.
+	/// </summary>
+	public const int AnyGamepad = -1;
+
 	protected IInputManager InputManager { get; }
 
-	public InputBase(IInputManager inputManager)
+	protected int Player { get; }
+
+	public InputBase(IInputManager inputManager, int player = AnyGamepad)
 	{
 		InputManager = inputManager;
+		Player = player;
 
 		foreach (var prop in GetType().GetProperties())
 		{
 			var attrs = (InputAttribute[])prop.GetCustomAttributes(typeof(InputAttribute), true);
 			if (attrs.Length > 0)
 			{
-				var method = attrs.Select<InputAttribute, InputButton>(attr => () => attr.GetValue(InputManager))
+				var method = attrs.Select<InputAttribute, InputButton>(attr => () => attr.GetValue(InputManager, Player))
 					.Aggregate((a, b) => () => a() || b());
 
 				SetMethod(this, prop, method);
@@ -43,7 +51,7 @@ public record InputBase
 			var axisAttrs = (AxisInputAttribute[])prop.GetCustomAttributes(typeof(AxisInputAttribute), true);
 			if (axisAttrs.Length > 0)
 			{
-				var method = axisAttrs.Select<AxisInputAttribute, InputAxis>(attr => () => attr.GetValue(InputManager))
+				var method = axisAttrs.Select<AxisInputAttribute, InputAxis>(attr => () => attr.GetValue(InputManager, Player))
 					.Aggregate((a, b) => () => a() + b());
 
 				SetMethod(this, prop, new InputAxis(() => Math.Clamp(method(), -1.0f, 1.0f)));

@@ -19,7 +19,7 @@ public class KeyboardAxisInputAttribute : AxisInputAttribute
 	public KeyboardAxisInputAttribute(Key negative, Key positive) =>
 		(Negative, Positive) = (negative, positive);
 
-	public override float GetValue(IInputManager inputManager) =>
+	public override float GetValue(IInputManager inputManager, int _) =>
 		(inputManager.IsKeyPressed(Negative), inputManager.IsKeyPressed(Positive)) switch
 		{
 			(true, false) => -1.0f,

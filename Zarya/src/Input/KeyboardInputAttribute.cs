@@ -19,6 +19,6 @@ public class KeyboardInputAttribute : InputAttribute
 	public KeyboardInputAttribute(Key key, InputState state = InputState.Pressed) =>
 		(Key, State) = (key, state);
 
-	public override bool GetValue(IInputManager inputManager) =>
+	public override bool GetValue(IInputManager inputManager, int _) =>
 		inputManager.IsKey(Key, State);
 }
