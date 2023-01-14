@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Zarya\Zarya.csproj"/>
-		<PackageReference Include="Silk.NET" Version="2.12.0"/>
+		<PackageReference Include="Silk.NET" Version="2.16.0"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="assets\**\*">
