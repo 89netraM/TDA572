@@ -13,7 +13,7 @@ public class SkiaSharpRenderer : IDisposable
 	private readonly SilkWindow silkWindow;
 	private RenderingContext? renderingContext = null;
 
-	private readonly List<ISkiaSharpRenderable> renderables = new List<ISkiaSharpRenderable>();
+	private readonly OrderedList<int, ISkiaSharpRenderable> renderables = new OrderedList<int, ISkiaSharpRenderable>();
 
 	public SkiaSharpRenderer(SilkWindow silkWindow)
 	{
@@ -48,10 +48,16 @@ public class SkiaSharpRenderer : IDisposable
 	}
 
 	/// <summary>
-	/// Adds a renderable to the renderer, to be rendered on the next render.
+	/// Adds a renderable at layer 0 to the renderer, to be rendered on the next render.
 	/// </summary>
 	public void AddRenderable(ISkiaSharpRenderable renderable) =>
-		renderables.Add(renderable);
+		renderables.Add(0, renderable);
+
+	/// <summary>
+	/// Adds a renderable at the given layer to the renderer, to be rendered on the next render.
+	/// </summary>
+	public void AddRenderable(ISkiaSharpRenderable renderable, int layer) =>
+		renderables.Add(layer, renderable);
 
 	/// <summary>
 	/// Removes a renderable from the renderer.
@@ -91,7 +97,7 @@ public class SkiaSharpRenderer : IDisposable
 			(renderTarget, surface, canvas) = CreateRenderTarget(grContext, width, height);
 		}
 
-		public void Render(IReadOnlyList<ISkiaSharpRenderable> renderables)
+		public void Render(IEnumerable<ISkiaSharpRenderable> renderables)
 		{
 			grContext.ResetContext();
 			canvas.Clear(SKColors.Black);

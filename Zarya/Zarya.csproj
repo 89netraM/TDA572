@@ -3,7 +3,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<PackageId>Zarya</PackageId>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Authors>Mårten Åsberg</Authors>
 		<PackageDescription>The Zarya game engine</PackageDescription>
 		<RepositoryUrl>https://github.com/89netraM/TDA572</RepositoryUrl>
