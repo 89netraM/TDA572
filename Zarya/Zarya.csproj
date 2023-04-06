@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Nullable>enable</Nullable>
 		<PackageId>Zarya</PackageId>
 		<Version>1.0.2</Version>
@@ -9,8 +10,9 @@
 		<RepositoryUrl>https://github.com/89netraM/TDA572</RepositoryUrl>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="ComputeSharp" Version="2.0.3" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="Silk.NET" Version="2.16.0" />
-		<PackageReference Include="SkiaSharp" Version="2.88.3"/>
+		<PackageReference Include="SkiaSharp" Version="2.88.3" />
 	</ItemGroup>
 </Project>
