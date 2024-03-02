@@ -13,7 +13,7 @@ var game = builder.Build<SilkWindow>();
 CreateBall(position: new(-10.0f, 0.0f, 20.0f), albedo: new(1.0f, 0.0f, 0.0f));
 CreateBall(position: new(0.0f, 0.0f, 20.0f), waveOffset: MathF.PI / 2.0f, albedo: new(0.0f, 1.0f, 0.0f));
 CreateBall(position: new(10.0f, 0.0f, 20.0f), waveOffset: MathF.PI, albedo: new(0.0f, 0.0f, 1.0f));
-CreateBall(position: new(12.5f, 10.0f, 17.5f), radius: 5.0f, waveRadius: 0.0f, albedo: new(0.0f, 0.0f, 0.0f), emissive: new(1000.0f, 900.0f, 700.0f));
+CreateBall(position: new(12.5f, 10.0f, 17.5f), radius: 5.0f, waveRadius: 0.0f, albedo: new(0.0f, 0.0f, 0.0f), emissive: new(1.0f, 1.0f, 1.0f));
 CreateBall(position: new(0.0f, -1006.5f, 20.0f), radius: 1000.0f, waveRadius: 0.0f);
 game.Run();
 

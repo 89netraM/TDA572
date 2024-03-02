@@ -6,38 +6,42 @@ namespace Zarya.RayTracer;
 [EmbeddedBytecode(8, 8, 1)]
 readonly partial struct Shader : IPixelShader<float4>
 {
+	private const float AmbientLight = 0.1f;
+
 	private readonly float time;
 	private readonly float cameraDistance;
 	private readonly float aspectRatio;
 	private readonly ReadOnlyBuffer<RayTracerObject> objects;
-	private readonly int numberOfRays;
-	private readonly int numberOfBounces;
+	private readonly int cameraRayCount;
+	private readonly int lightRayCount;
+	private readonly float3 ambientLight;
 
-	public Shader(float time, float fov, float aspectRatio, ReadOnlyBuffer<RayTracerObject> objects, int numberOfRays = 10, int numberOfBounces = 5)
+	public Shader(float time, float fov, float aspectRatio, ReadOnlyBuffer<RayTracerObject> objects, float3? ambientLight = null, int cameraRayCount = 50, int lightRayCount = 50)
 	{
 		this.time = time;
 		this.cameraDistance = 1.0f / MathF.Tan(fov * 0.5f * MathF.PI / 180.0f);
 		this.aspectRatio = aspectRatio;
 		this.objects = objects;
-		this.numberOfRays = numberOfRays;
-		this.numberOfBounces = numberOfBounces;
+		this.cameraRayCount = cameraRayCount;
+		this.lightRayCount = lightRayCount;
+		this.ambientLight = ambientLight ?? new(AmbientLight, AmbientLight, AmbientLight);
 	}
 
 	public float4 Execute()
 	{
 		var rngState = RngSeed(ThreadIds.XY);
 
-		float3 rayPosition = new(0.0f, 0.0f, 0.0f);
 		float3 rayTarget = new(ThreadIds.Normalized.XY * 2.0f - 1.0f, cameraDistance);
 		rayTarget.Y /= aspectRatio;
-		float3 rayDir = Hlsl.Normalize(rayTarget - rayPosition);
 
 		float3 color = new(0.0f, 0.0f, 0.0f);
-		for (int i = 0; i < numberOfRays; i++)
+		for (int i = 0; i < cameraRayCount; i++)
 		{
-			color += GetColorForRay(rayPosition, rayDir, ref rngState);
+			float3 rayOrigin = new(RandUnitVector2(ref rngState) * 0.001f, 0.0f);
+			float3 rayDir = Hlsl.Normalize(rayTarget - rayOrigin);
+			color += GetColorForRay(rayOrigin, rayDir, ref rngState);
 		}
-		return new(color / (float)numberOfRays, 1.0f);
+		return new(color / cameraRayCount, 1.0f);
 	}
 
 	private uint RngSeed(int2 xy) =>
@@ -53,7 +57,13 @@ readonly partial struct Shader : IPixelShader<float4>
 		return (float)rngState / uint.MaxValue;
 	}
 
-	private float3 RandUnitVector(ref uint rngState)
+	private float2 RandUnitVector2(ref uint rngState)
+	{
+		float a = RandFloat(ref rngState) * 2.0f * MathF.PI;
+		return new(Hlsl.Cos(a), Hlsl.Sin(a));
+	}
+
+	private float3 RandUnitVector3(ref uint rngState)
 	{
 		float z = RandFloat(ref rngState) * 2.0f - 1.0f;
 		float a = RandFloat(ref rngState) * 2.0f * MathF.PI;
@@ -61,26 +71,41 @@ readonly partial struct Shader : IPixelShader<float4>
 		return new(r * Hlsl.Cos(a), r * Hlsl.Sin(a), z);
 	}
 
-	private float3 GetColorForRay(float3 startRayPos, float3 startRayDir, ref uint rngState)
+	private float3 GetColorForRay(float3 rayPos, float3 rayDir, ref uint rngState)
 	{
 		float3 color = new(0.0f, 0.0f, 0.0f);
-		float3 throughput = new(1.0f, 1.0f, 1.0f);
-		float3 rayPos = startRayPos;
-		float3 rayDir = startRayDir;
 
-		for (int bounceIndex = 0; bounceIndex < numberOfBounces; bounceIndex++)
+		if (!IntersectObjects(rayPos, rayDir, out HitInfo hitInfo))
 		{
-			if (!IntersectObjects(rayPos, rayDir, out HitInfo hitInfo))
+			return color;
+		}
+
+		var hitObject = objects[hitInfo.ObjectIndex];
+		if (Hlsl.Any(hitObject.Emissive))
+		{
+			return hitObject.Emissive;
+		}
+		color += hitObject.Albedo * ambientLight;
+
+		for (int i = 0; i < objects.Length; i++)
+		{
+			var lightObject = objects[i];
+			if (!Hlsl.Any(lightObject.Emissive))
 			{
-				break;
+				continue;
 			}
-
-			rayPos = hitInfo.Position + hitInfo.Normal * 0.01f;
-			rayDir = Hlsl.Normalize(hitInfo.Normal + RandUnitVector(ref rngState));
-
-			var hitObject = objects[hitInfo.ObjectIndex];
-			color += hitObject.Emissive * throughput;
-			throughput *= hitObject.Albedo;
+			float3 lightRayPos = hitInfo.Position + hitInfo.Normal * 0.001f;
+			for (int l = 0; l < lightRayCount; l++)
+			{
+				float3 lightRayTarget = lightObject.Position + RandUnitVector3(ref rngState) * RandFloat(ref rngState) * lightObject.Radius;
+				float3 lightRayDir = Hlsl.Normalize(lightRayTarget - lightRayPos);
+				if (IntersectObjects(lightRayPos, lightRayDir, out HitInfo lightHitInfo) && lightHitInfo.ObjectIndex == i)
+				{
+					float3 lightColor = lightObject.Emissive;
+					float3 lightIntensity = lightColor * Hlsl.Max(Hlsl.Dot(hitInfo.Normal, lightRayDir), 0.0f);
+					color += hitObject.Albedo * lightIntensity / lightRayCount;
+				}
+			}
 		}
 
 		return color;
