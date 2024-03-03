@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Zarya;
 
@@ -27,7 +28,7 @@ public interface IGameManager
 	/// Creates a new entity of type <typeparamref name="T"/>.
 	/// Provide the parameters to the constructor of the entity that cannot be provided by the system.
 	/// </summary>
-	T? Create<T>(params object[] parameters) where T : class;
+	T? Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(params object[] parameters) where T : class;
 	/// <summary>
 	/// Destroys the entity (or returns false if the entity does not exist), and disposes of all resources associated with it.
 	/// </summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -143,7 +144,7 @@ public class PhysicsBody2D : IDisposable
 	/// Adds a collider of type <typeparamref name="T"/> to this body.
 	/// Provide the parameters to the constructor of the collider that cannot be provided by the system.
 	/// </summary>
-	public T? AddCollider<T>(params object[] parameters) where T : class, ICollider2D
+	public T? AddCollider<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(params object[] parameters) where T : class, ICollider2D
 	{
 		var obj = ActivatorUtilities.CreateInstance<T>(serviceProvider, parameters);
 		if (obj is T)

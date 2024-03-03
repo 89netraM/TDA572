@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Silk.NET.Core.Contexts;
+using Silk.NET.Input.Glfw;
 using Silk.NET.Windowing;
+using Silk.NET.Windowing.Glfw;
 
 namespace Zarya.Silk.NET;
 
@@ -82,6 +85,9 @@ public partial class SilkWindow : IGameManager, IGLContextSource, IDisposable
 
 	void IGameManager.Run()
 	{
+		GlfwInput.RegisterPlatform();
+		GlfwWindowing.RegisterPlatform();
+
 		window = Window.Create(WindowOptions with
 		{
 			FramesPerSecond = 1.0d / TargetDeltaTime,
@@ -109,7 +115,7 @@ public partial class SilkWindow : IGameManager, IGLContextSource, IDisposable
 		Render?.Invoke();
 
 	/// <inheritdoc/>
-	public T? Create<T>(params object[] parameters) where T : class
+	public T? Create<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(params object[] parameters) where T : class
 	{
 		var scope = serviceScopeFactory.CreateScope();
 		var obj = ActivatorUtilities.CreateInstance<T>(scope.ServiceProvider, parameters);

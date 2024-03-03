@@ -18,6 +18,6 @@ partial class GamepadInput(IInputManager inputManager, int player) : InputBase(i
 	public partial float LookHorizontal();
 
 	public bool Fire() => (Player == InputBase.AnyGamepad ?
-		InputManager.GetGamepadAxis(GamepadAxis.Trigger) :
-		InputManager.GetGamepadAxis(GamepadAxis.Trigger, Player)) > 0.9f;
+			InputManager.GetGamepadAxis(GamepadAxis.Trigger) :
+			InputManager.GetGamepadAxis(GamepadAxis.Trigger, Player)) > 0.9f;
 }
