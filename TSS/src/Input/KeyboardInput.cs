@@ -1,24 +1,22 @@
 using Zarya;
 using Zarya.Input;
 
-#nullable disable
-
 namespace TSS;
 
-record KeyboardInput(IInputManager inputManager) : InputBase(inputManager), IInput
+partial class KeyboardInput(IInputManager inputManager) : InputBase(inputManager), IInput
 {
 	[KeyboardAxisInput(Key.S, Key.W)]
-	public InputAxis Vertical { get; }
+	public partial float Vertical();
 
 	[KeyboardAxisInput(Key.A, Key.D)]
-	public InputAxis Horizontal { get; }
+	public partial float Horizontal();
 
 	[KeyboardAxisInput(Key.Down, Key.Up)]
-	public InputAxis LookVertical { get; }
+	public partial float LookVertical();
 
 	[KeyboardAxisInput(Key.Left, Key.Right)]
-	public InputAxis LookHorizontal { get; }
+	public partial float LookHorizontal();
 
 	[KeyboardInput(Key.Space)]
-	public InputButton Fire { get; }
+	public partial bool Fire();
 }

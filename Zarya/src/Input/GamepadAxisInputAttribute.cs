@@ -1,21 +1,12 @@
+using System;
+
 namespace Zarya.Input;
+
+#pragma warning disable CS9113
 
 /// <summary>
 /// Attribute for mapping a gamepad axis to an input action.
 /// </summary>
-public class GamepadAxisInputAttribute : AxisInputAttribute
-{
-	/// <summary>
-	/// The gamepad axis used.
-	/// </summary>
-	public GamepadAxis Axis { get; }
-
-	/// <param name="axis">The gamepad axis used.</param>
-	public GamepadAxisInputAttribute(GamepadAxis axis) =>
-		Axis = axis;
-
-	public override float GetValue(IInputManager inputManager, int player) =>
-		player == InputBase.AnyGamepad ?
-			inputManager.GetGamepadAxis(Axis) :
-			inputManager.GetGamepadAxis(Axis, player);
-}
+/// <param name="axis">The gamepad axis used.</param>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public class GamepadAxisInputAttribute(GamepadAxis axis) : Attribute;

@@ -3,9 +3,11 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Zarya\Zarya.csproj"/>
+		<ProjectReference Include="..\Zarya.SourceGenerators\Zarya.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="assets\**\*">

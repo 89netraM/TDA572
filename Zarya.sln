@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSS", "TSS\TSS.csproj", "{D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTest", "GameTest\GameTest.csproj", "{08BED1C6-93A7-477F-B2B1-5662E210F070}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zarya.SourceGenerators", "Zarya.SourceGenerators\Zarya.SourceGenerators.csproj", "{D0BB016D-DC0C-45A6-A7BD-E9A6AEB1E274}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{08BED1C6-93A7-477F-B2B1-5662E210F070}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08BED1C6-93A7-477F-B2B1-5662E210F070}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08BED1C6-93A7-477F-B2B1-5662E210F070}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BB016D-DC0C-45A6-A7BD-E9A6AEB1E274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0BB016D-DC0C-45A6-A7BD-E9A6AEB1E274}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0BB016D-DC0C-45A6-A7BD-E9A6AEB1E274}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0BB016D-DC0C-45A6-A7BD-E9A6AEB1E274}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
